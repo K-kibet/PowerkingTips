@@ -1,0 +1,36 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.PowerkingBettingTips" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/green</item>
+        <item name="colorPrimaryVariant">@color/dark_green</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/light_green</item>
+        <item name="colorSecondaryVariant">@color/dark_green</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+        <item name="drawerItemBackground">@color/green</item>
+        <item name="drawerItemColorChecked">@color/white</item>
+        <item name="drawerItemColorNormal">@color/dark</item>
+        <item name="navHeaderTitleColor">@color/white</item>
+        <item name="navHeaderDescriptionColor">@color/dark_green</item>
+        <item name="drawerBackground">@color/white</item>
+
+    </style>
+
+    <style name="Theme.NavigationDrawer" parent="ThemeOverlay.MaterialComponents.Light">
+        <item name="android:scrollbarThumbVertical">@android:color/transparent</item>
+        <item name="colorControlHighlight">@color/light_green</item>
+        <item name="colorPrimary">@color/green</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+    </style>
+    <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@color/dark_green</item>
+    </style>
+</resources>

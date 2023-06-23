@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".SettingsFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEdit"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="@string/edit_profile"
+            android:layout_margin="5dp"
+            android:drawableTint="@color/green"
+            android:textColor="@color/green"
+            android:backgroundTint="@color/white"
+            app:strokeColor="@color/green"
+            app:strokeWidth="1dp"
+            android:drawableEnd="@drawable/baseline_edit_24"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRemoveAds"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="@string/remove_ads"
+            android:layout_margin="5dp"
+            android:drawableTint="@color/green"
+            android:textColor="@color/green"
+            android:backgroundTint="@color/white"
+            app:strokeColor="@color/green"
+            app:strokeWidth="1dp"
+            android:drawableEnd="@drawable/baseline_remove_circle_24"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnShare"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="@string/share"
+            android:layout_margin="5dp"
+            android:drawableTint="@color/green"
+            android:textColor="@color/green"
+            android:backgroundTint="@color/white"
+            app:strokeColor="@color/green"
+            app:strokeWidth="1dp"
+            android:drawableEnd="@drawable/baseline_share_24"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRate"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="@string/rate_us"
+            android:layout_margin="5dp"
+            android:drawableTint="@color/green"
+            android:textColor="@color/green"
+            android:backgroundTint="@color/white"
+            app:strokeColor="@color/green"
+            app:strokeWidth="1dp"
+            android:drawableEnd="@drawable/baseline_star_rate_24"/>
+    </LinearLayout>
+</FrameLayout>

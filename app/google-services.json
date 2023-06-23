@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "617291483997",
+    "project_id": "powerking-betting-tips",
+    "storage_bucket": "powerking-betting-tips.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:617291483997:android:69b4f122b42b34c0d7b6b4",
+        "android_client_info": {
+          "package_name": "com.kibet.powerking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "617291483997-gr3ter33dj9csa06g9u7deuja5ego29j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1zY7pgOMT19HFTffNdbQ1vO0wg8Ru7Hk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "617291483997-gr3ter33dj9csa06g9u7deuja5ego29j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
