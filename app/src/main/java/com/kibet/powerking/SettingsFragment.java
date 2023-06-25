@@ -5,13 +5,21 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,9 +36,10 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 
 public class SettingsFragment extends Fragment {
-    PayPalConfiguration config;
+    private FrameLayout adViewContainer;
     FirebaseAuth mAuth;
     FirebaseUser currentUser;
+    PayPalConfiguration config;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -46,10 +55,10 @@ public class SettingsFragment extends Fragment {
         MaterialButton shareBtn = view.findViewById(R.id.btnShare);
         MaterialButton rateBtn = view.findViewById(R.id.btnRate);
 
-        config = new PayPalConfiguration().environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
-                .clientId(getString(R.string.paypal_client_key));
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+        config = new PayPalConfiguration().environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
+                .clientId(getString(R.string.paypal_client_key));
 
         editBtn.setOnClickListener(v -> editProfile());
         removeAdsBtn.setOnClickListener(v -> {
@@ -63,17 +72,18 @@ public class SettingsFragment extends Fragment {
 
         shareBtn.setOnClickListener(v -> share());
         rateBtn.setOnClickListener(v -> rate());
+
+        adViewContainer = view.findViewById(R.id.adViewContainer);
+        adViewContainer.post(this::LoadBanner);
     }
 
-    private void openDialog () {
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialogTheme);
-        View bottomSheetView = LayoutInflater.from(getContext()).inflate(R.layout.bottom_sheet, getView().findViewById(R.id.bottomSheet));
-        bottomSheetView.findViewById(R.id.btnCheckout).setOnClickListener(v -> getPayment());
-        bottomSheetDialog.setContentView(bottomSheetView);
-        bottomSheetDialog.show();
-    }
     private void editProfile () {
-        Intent intent = new Intent(getContext(), EditProfileActivity.class);
+        Intent intent;
+        if(currentUser != null) {
+            intent = new Intent(getContext(), EditProfileActivity.class);
+        } else {
+            intent = new Intent(getContext(), RegisterActivity.class);
+        }
         startActivity(intent);
     }
     private void share() {
@@ -99,26 +109,34 @@ public class SettingsFragment extends Fragment {
     }
 
     private Intent rateIntentForUrl(String url) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("%s?id=%s", url, getContext().getPackageName())));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("%s?id=%s", url, requireContext().getPackageName())));
         int flags = Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_MULTIPLE_TASK;
         flags |= Intent.FLAG_ACTIVITY_NEW_DOCUMENT;
         intent.addFlags(flags);
         return intent;
     }
+
+    private void openDialog () {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme);
+        View bottomSheetView = LayoutInflater.from(getContext()).inflate(R.layout.bottom_sheet, getView().findViewById(R.id.bottomSheet));
+        bottomSheetView.findViewById(R.id.btnCheckout).setOnClickListener(v -> getPayment());
+        bottomSheetDialog.setContentView(bottomSheetView);
+        bottomSheetDialog.show();
+    }
+
     private void getPayment() {
-        String amount = "5.9";
-        PayPalPayment payment = new PayPalPayment(new BigDecimal(amount), "USD", "Payment Fees",
-                PayPalPayment.PAYMENT_INTENT_SALE);
+        PayPalPayment payment = new PayPalPayment(new BigDecimal(getString(R.string.amount)), "USD", "Payment Fees", PayPalPayment.PAYMENT_INTENT_SALE);
         Intent intent = new Intent(getContext(), PaymentActivity.class);
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
         intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
         startActivityForResult(intent, Integer.parseInt(getString(R.string.PAYPAL_REQUEST_CODE)));
     }
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Integer.parseInt(getString(R.string.PAYPAL_REQUEST_CODE))) {
-
             if (resultCode == Activity.RESULT_OK) {
                 PaymentConfirmation confirm = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
                 if (confirm != null) {
@@ -140,5 +158,24 @@ public class SettingsFragment extends Fragment {
         }
     }
 
+    private void LoadBanner() {
+        AdView adView = new AdView(getContext());
+        adView.setAdUnitId(getString(R.string.Banner_Ad_Unit));
+        adViewContainer.removeAllViews();
+        adViewContainer.addView(adView);
+        AdSize adSize = getAdSize();
+        adView.setAdSize(adSize);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+    }
 
+    private AdSize getAdSize() {
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        display.getMetrics(outMetrics);
+        float widthPixels = outMetrics.widthPixels;
+        float density = outMetrics.density;
+        int adWidth = (int) (widthPixels / density);
+        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(getContext(), adWidth);
+    }
 }

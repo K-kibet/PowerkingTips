@@ -2,28 +2,35 @@ package com.kibet.powerking;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class FreeFragment extends Fragment {
+    private FrameLayout adViewContainer;
     private RecyclerView recyclerView;
     private TipsAdapter tipsAdapter;
     private List<Tip> tipsList;
-    AlertDialog.Builder builder;
-    AlertDialog alertDialog;
     FirebaseFirestore db;
-
+    LinearLayoutManager linearLayoutManager;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -33,24 +40,18 @@ public class FreeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         recyclerView = view.findViewById(R.id.recyclerView);
         tipsList = new ArrayList<>();
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(linearLayoutManager);
         tipsAdapter = new TipsAdapter(getContext(), tipsList);
+        linearLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
         db = FirebaseFirestore.getInstance();
 
-        builder = new AlertDialog.Builder(requireContext());
-        builder.setMessage("An error occurred while trying to fetch free tips.Do you want to exit?");
-        builder.setTitle("Error!");
-        builder.setCancelable(false);
-        builder.setPositiveButton("Try Again", (dialog, which) -> {
-            dialog.cancel();
-            readFirebase();
-        });
-        builder.setNegativeButton("Ok", (dialog, which) -> dialog.cancel());
+
         new Handler().postDelayed(this::readFirebase, 1000);
+        adViewContainer = view.findViewById(R.id.adViewContainer);
+        adViewContainer.post(this::LoadBanner);
     }
     private void readFirebase () {
         db.collection("tips").whereEqualTo("premium", false)
@@ -68,9 +69,27 @@ public class FreeFragment extends Fragment {
                             tipsList.add(tip);
                         }
                         recyclerView.setAdapter(tipsAdapter);
-                    } else {
-                        alertDialog.show();
                     }
                 });
+    }
+    private void LoadBanner() {
+        AdView adView = new AdView(getContext());
+        adView.setAdUnitId(getString(R.string.Banner_Ad_Unit));
+        adViewContainer.removeAllViews();
+        adViewContainer.addView(adView);
+        AdSize adSize = getAdSize();
+        adView.setAdSize(adSize);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+    }
+
+    private AdSize getAdSize() {
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        display.getMetrics(outMetrics);
+        float widthPixels = outMetrics.widthPixels;
+        float density = outMetrics.density;
+        int adWidth = (int) (widthPixels / density);
+        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(getContext(), adWidth);
     }
 }

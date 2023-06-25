@@ -2,10 +2,16 @@ package com.kibet.powerking;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.Display;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -14,6 +20,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class EditProfileActivity extends AppCompatActivity {
+    private FrameLayout adViewContainer;
     FirebaseAuth mAuth;
     FirebaseUser currentUser;
     SharedPreferences prefs;
@@ -33,6 +40,9 @@ public class EditProfileActivity extends AppCompatActivity {
 
         MaterialButton btnUpdate = findViewById(R.id.btnUpdate);
         btnUpdate.setOnClickListener(v -> updateProfile());
+
+        adViewContainer = findViewById(R.id.adViewContainer);
+        adViewContainer.post(this::LoadBanner);
     }
 
     private void setValues () {
@@ -96,5 +106,26 @@ public class EditProfileActivity extends AppCompatActivity {
             textEmail.setError(null);
             return true;
         }
+    }
+
+    private void LoadBanner() {
+        AdView adView = new AdView(this);
+        adView.setAdUnitId(getString(R.string.Banner_Ad_Unit));
+        adViewContainer.removeAllViews();
+        adViewContainer.addView(adView);
+        AdSize adSize = getAdSize();
+        adView.setAdSize(adSize);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+    }
+
+    private AdSize getAdSize() {
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        display.getMetrics(outMetrics);
+        float widthPixels = outMetrics.widthPixels;
+        float density = outMetrics.density;
+        int adWidth = (int) (widthPixels / density);
+        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, adWidth);
     }
 }

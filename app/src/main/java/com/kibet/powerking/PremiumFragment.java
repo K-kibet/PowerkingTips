@@ -7,21 +7,28 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
@@ -38,15 +45,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PremiumFragment extends Fragment {
+    private FrameLayout adViewContainer;
     PayPalConfiguration config;
     private RecyclerView recyclerView;
     private LinearLayout noUserLayout;
     private TipsAdapter tipsAdapter;
     private List<Tip> tipsList;
-    AlertDialog.Builder builder;
-    AlertDialog alertDialog;
     FirebaseFirestore db;
     SharedPreferences prefs;
+    FirebaseAuth mAuth;
+    FirebaseUser currentUser;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -61,7 +69,7 @@ public class PremiumFragment extends Fragment {
         noUserLayout = view.findViewById(R.id.noUserLayout);
 
         MaterialButton upgradeBtn = view.findViewById(R.id.btnUpgrade);
-        prefs = getContext().getSharedPreferences("Powerking", MODE_PRIVATE);
+        prefs = requireContext().getSharedPreferences("Powerking", MODE_PRIVATE);
         db = FirebaseFirestore.getInstance();
         config = new PayPalConfiguration().environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
                 .clientId(getString(R.string.paypal_client_key));
@@ -69,16 +77,6 @@ public class PremiumFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         tipsAdapter = new TipsAdapter(getContext(), tipsList);
-
-        builder = new AlertDialog.Builder(requireContext());
-        builder.setMessage("An error occurred while trying to fetch free tips.Do you want to exit?");
-        builder.setTitle("Error!");
-        builder.setCancelable(false);
-        builder.setPositiveButton("Try Again", (dialog, which) -> {
-            dialog.cancel();
-            readFirebase();
-        });
-        builder.setNegativeButton("Ok", (dialog, which) -> dialog.cancel());
 
         new Handler().postDelayed(() -> {
             if (prefs.getBoolean("premium", false)) {
@@ -91,17 +89,42 @@ public class PremiumFragment extends Fragment {
             }
         }, 1000);
 
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+
         upgradeBtn.setOnClickListener(v ->{
-            if(prefs.getBoolean("premium", false)) {
+            if(currentUser != null) {
                 openDialog();
             } else {
-                Intent intent = new Intent(getContext(), RegisterActivity.class);
+                Intent intent = new Intent(requireContext(), RegisterActivity.class);
                 startActivity(intent);
             }
         });
+
+        adViewContainer = view.findViewById(R.id.adViewContainer);
+        adViewContainer.post(this::LoadBanner);
+    }
+    private void readFirebase () {
+        db.collection("tips").whereEqualTo("premium", true)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Tip tip = new Tip(document.getString("home"),
+                                    document.getString("away"),
+                                    document.getString("pick"),
+                                    document.getString("odd"),
+                                    document.getString("status"),
+                                    document.getString("won"),
+                                    document.getId());
+                            tipsList.add(tip);
+                        }
+                        recyclerView.setAdapter(tipsAdapter);
+                    }
+                });
     }
 
-    private void openDialog () {
+    public void openDialog () {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme);
         View bottomSheetView = LayoutInflater.from(getContext()).inflate(R.layout.bottom_sheet, getView().findViewById(R.id.bottomSheet));
         bottomSheetView.findViewById(R.id.btnCheckout).setOnClickListener(v -> getPayment());
@@ -110,8 +133,7 @@ public class PremiumFragment extends Fragment {
     }
 
     private void getPayment() {
-        PayPalPayment payment = new PayPalPayment(new BigDecimal(getString(R.string.amount)), "USD", "Payment Fees",
-                PayPalPayment.PAYMENT_INTENT_SALE);
+        PayPalPayment payment = new PayPalPayment(new BigDecimal(getString(R.string.amount)), "USD", "Payment Fees", PayPalPayment.PAYMENT_INTENT_SALE);
         Intent intent = new Intent(getContext(), PaymentActivity.class);
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
         intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
@@ -119,12 +141,10 @@ public class PremiumFragment extends Fragment {
     }
 
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Integer.parseInt(getString(R.string.PAYPAL_REQUEST_CODE))) {
-
             if (resultCode == Activity.RESULT_OK) {
                 PaymentConfirmation confirm = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
                 if (confirm != null) {
@@ -146,25 +166,24 @@ public class PremiumFragment extends Fragment {
         }
     }
 
-    private void readFirebase () {
-        db.collection("tips").whereEqualTo("premium", true)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Tip tip = new Tip(document.getString("home"),
-                                    document.getString("away"),
-                                    document.getString("pick"),
-                                    document.getString("odd"),
-                                    document.getString("status"),
-                                    document.getString("won"),
-                                    document.getId());
-                            tipsList.add(tip);
-                        }
-                        recyclerView.setAdapter(tipsAdapter);
-                    } else {
-                        alertDialog.show();
-                    }
-                });
+    private void LoadBanner() {
+        AdView adView = new AdView(getContext());
+        adView.setAdUnitId(getString(R.string.Banner_Ad_Unit));
+        adViewContainer.removeAllViews();
+        adViewContainer.addView(adView);
+        AdSize adSize = getAdSize();
+        adView.setAdSize(adSize);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+    }
+
+    private AdSize getAdSize() {
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        display.getMetrics(outMetrics);
+        float widthPixels = outMetrics.widthPixels;
+        float density = outMetrics.density;
+        int adWidth = (int) (widthPixels / density);
+        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(getContext(), adWidth);
     }
 }
