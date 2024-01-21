@@ -15,12 +15,12 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.kibet.powerking.ads.BannerManager;
 
 import java.util.HashMap;
 import java.util.Objects;
 
 public class EditProfileActivity extends AppCompatActivity {
-    private FrameLayout adViewContainer;
     FirebaseAuth mAuth;
     FirebaseUser currentUser;
     SharedPreferences prefs;
@@ -41,8 +41,9 @@ public class EditProfileActivity extends AppCompatActivity {
         MaterialButton btnUpdate = findViewById(R.id.btnUpdate);
         btnUpdate.setOnClickListener(v -> updateProfile());
 
-        adViewContainer = findViewById(R.id.adViewContainer);
-        adViewContainer.post(this::LoadBanner);
+        FrameLayout adViewContainer = findViewById(R.id.adViewContainer);
+        BannerManager bannerManager = new BannerManager(this, EditProfileActivity.this, adViewContainer);
+        bannerManager.loadBanner();
     }
 
     private void setValues () {
@@ -106,26 +107,5 @@ public class EditProfileActivity extends AppCompatActivity {
             textEmail.setError(null);
             return true;
         }
-    }
-
-    private void LoadBanner() {
-        AdView adView = new AdView(this);
-        adView.setAdUnitId(getString(R.string.Banner_Ad_Unit));
-        adViewContainer.removeAllViews();
-        adViewContainer.addView(adView);
-        AdSize adSize = getAdSize();
-        adView.setAdSize(adSize);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
-    }
-
-    private AdSize getAdSize() {
-        Display display = getWindowManager().getDefaultDisplay();
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        display.getMetrics(outMetrics);
-        float widthPixels = outMetrics.widthPixels;
-        float density = outMetrics.density;
-        int adWidth = (int) (widthPixels / density);
-        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, adWidth);
     }
 }

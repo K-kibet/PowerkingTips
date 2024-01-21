@@ -6,9 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +18,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.kibet.powerking.ads.BannerManager;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
@@ -39,7 +35,6 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 
 public class AccountFragment extends Fragment {
-    private FrameLayout adViewContainer;
     SharedPreferences prefs;
     TextView textPlan, textUsername, textEmail;
     LinearLayout userLayout, noUserLayout;
@@ -93,8 +88,9 @@ public class AccountFragment extends Fragment {
         });
         btnRegister.setOnClickListener(v -> openRegister());
 
-        adViewContainer = view.findViewById(R.id.adViewContainer);
-        adViewContainer.post(this::LoadBanner);
+        FrameLayout adViewContainer = view.findViewById(R.id.adViewContainer);
+        BannerManager bannerManager = new BannerManager(requireContext(), requireActivity(), adViewContainer);
+        bannerManager.loadBanner();
     }
 
     private void setValues () {
@@ -159,26 +155,5 @@ public class AccountFragment extends Fragment {
                 Log.i("paymentExample", "An invalid Payment or PayPalConfiguration was submitted. Please see the docs.");
             }
         }
-    }
-
-    private void LoadBanner() {
-        AdView adView = new AdView(getContext());
-        adView.setAdUnitId(getString(R.string.Banner_Ad_Unit));
-        adViewContainer.removeAllViews();
-        adViewContainer.addView(adView);
-        AdSize adSize = getAdSize();
-        adView.setAdSize(adSize);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
-    }
-
-    private AdSize getAdSize() {
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        display.getMetrics(outMetrics);
-        float widthPixels = outMetrics.widthPixels;
-        float density = outMetrics.density;
-        int adWidth = (int) (widthPixels / density);
-        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(getContext(), adWidth);
     }
 }

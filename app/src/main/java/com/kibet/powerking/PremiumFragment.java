@@ -31,6 +31,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.kibet.powerking.ads.BannerManager;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
@@ -45,7 +46,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PremiumFragment extends Fragment {
-    private FrameLayout adViewContainer;
     PayPalConfiguration config;
     private RecyclerView recyclerView;
     private LinearLayout noUserLayout;
@@ -101,8 +101,9 @@ public class PremiumFragment extends Fragment {
             }
         });
 
-        adViewContainer = view.findViewById(R.id.adViewContainer);
-        adViewContainer.post(this::LoadBanner);
+        FrameLayout adViewContainer = view.findViewById(R.id.adViewContainer);
+        BannerManager bannerManager = new BannerManager(requireContext(), requireActivity(), adViewContainer);
+        bannerManager.loadBanner();
     }
     private void readFirebase () {
         db.collection("tips").whereEqualTo("premium", true)
@@ -164,26 +165,5 @@ public class PremiumFragment extends Fragment {
                 Log.i("paymentExample", "An invalid Payment or PayPalConfiguration was submitted. Please see the docs.");
             }
         }
-    }
-
-    private void LoadBanner() {
-        AdView adView = new AdView(getContext());
-        adView.setAdUnitId(getString(R.string.Banner_Ad_Unit));
-        adViewContainer.removeAllViews();
-        adViewContainer.addView(adView);
-        AdSize adSize = getAdSize();
-        adView.setAdSize(adSize);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
-    }
-
-    private AdSize getAdSize() {
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        display.getMetrics(outMetrics);
-        float widthPixels = outMetrics.widthPixels;
-        float density = outMetrics.density;
-        int adWidth = (int) (widthPixels / density);
-        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(getContext(), adWidth);
     }
 }

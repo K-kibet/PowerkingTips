@@ -11,8 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_gravity="center"
-        android:orientation="vertical"
-        tools:ignore="UselessParent">
+        android:orientation="vertical">
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnEdit"
             android:layout_width="match_parent"

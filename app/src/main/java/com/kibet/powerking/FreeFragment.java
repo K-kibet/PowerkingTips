@@ -2,8 +2,6 @@ package com.kibet.powerking;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,17 +13,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.kibet.powerking.ads.BannerManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FreeFragment extends Fragment {
-    private FrameLayout adViewContainer;
     private RecyclerView recyclerView;
     private TipsAdapter tipsAdapter;
     private List<Tip> tipsList;
@@ -50,8 +45,9 @@ public class FreeFragment extends Fragment {
 
 
         new Handler().postDelayed(this::readFirebase, 1000);
-        adViewContainer = view.findViewById(R.id.adViewContainer);
-        adViewContainer.post(this::LoadBanner);
+        FrameLayout adViewContainer = view.findViewById(R.id.adViewContainer);
+        BannerManager bannerManager = new BannerManager(requireContext(), requireActivity(), adViewContainer);
+        bannerManager.loadBanner();
     }
     private void readFirebase () {
         db.collection("tips").whereEqualTo("premium", false)
@@ -71,25 +67,5 @@ public class FreeFragment extends Fragment {
                         recyclerView.setAdapter(tipsAdapter);
                     }
                 });
-    }
-    private void LoadBanner() {
-        AdView adView = new AdView(getContext());
-        adView.setAdUnitId(getString(R.string.Banner_Ad_Unit));
-        adViewContainer.removeAllViews();
-        adViewContainer.addView(adView);
-        AdSize adSize = getAdSize();
-        adView.setAdSize(adSize);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
-    }
-
-    private AdSize getAdSize() {
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        display.getMetrics(outMetrics);
-        float widthPixels = outMetrics.widthPixels;
-        float density = outMetrics.density;
-        int adWidth = (int) (widthPixels / density);
-        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(getContext(), adWidth);
     }
 }
