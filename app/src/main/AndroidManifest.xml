@@ -15,28 +15,28 @@
         android:theme="@style/Theme.PowerkingBettingTips"
         tools:targetApi="33">
         <activity
-            android:name=".PromptActivity"
+            android:name=".activities.PromptActivity"
             android:exported="false" />
         <activity
-            android:name=".ConditionsActivity"
+            android:name=".activities.ConditionsActivity"
             android:exported="false" />
         <activity
-            android:name=".TipActivity"
+            android:name=".activities.TipActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".EditProfileActivity"
+            android:name=".activities.EditProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".RegisterActivity"
+            android:name=".activities.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".activities.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".activities.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

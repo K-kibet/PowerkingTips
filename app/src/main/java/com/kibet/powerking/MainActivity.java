@@ -15,12 +15,17 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.navigation.NavigationView;
+import com.kibet.powerking.fragments.AboutFragment;
+import com.kibet.powerking.fragments.AccountFragment;
+import com.kibet.powerking.fragments.FreeFragment;
+import com.kibet.powerking.fragments.PremiumFragment;
+import com.kibet.powerking.fragments.SettingsFragment;
+
 import java.util.Objects;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawer;
-
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -71,11 +76,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_share:
                 drawer.closeDrawer(GravityCompat.START);
-                share();
+                ShareManager shareManager = new ShareManager(this);
+                shareManager.shareApp();
                 return false;
             case R.id.nav_rate:
                 drawer.closeDrawer(GravityCompat.START);
-                rate();
+                RateManager rateManager = new RateManager(this);
+                rateManager.rate();
                 return false;
         }
         assert fragment != null;
@@ -83,34 +90,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    private void share() {
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Football Livestream");
-        String shareMessage = "\nLet me recommend you this application\n\n";
-        shareMessage = shareMessage + "https://play.google.com/store/apps/details?id=" + getPackageName() + "\n\n";
-        sendIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
-        sendIntent.setType("text/plain");
-        Intent shareIntent = Intent.createChooser(sendIntent, null);
-        startActivity(shareIntent);
-    }
-
-    public void rate() {
-        try {
-            Intent rateIntent = rateIntentForUrl("market://details");
-            startActivity(rateIntent);
-        } catch (ActivityNotFoundException e) {
-            Intent rateIntent = rateIntentForUrl("https://play.google.com/store/apps/details");
-            startActivity(rateIntent);
-        }
-    }
-
-    private Intent rateIntentForUrl(String url) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("%s?id=%s", url, getPackageName())));
-        int flags = Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_MULTIPLE_TASK;
-        flags |= Intent.FLAG_ACTIVITY_NEW_DOCUMENT;
-        intent.addFlags(flags);
-        return intent;
-    }
-
 }

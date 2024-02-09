@@ -8,7 +8,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.kibet.powerking"
+        applicationId 'com.codespear.powerking'
         minSdk 24
         targetSdk 33
         versionCode 1
@@ -35,12 +35,10 @@ dependencies {
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    implementation 'com.paypal.sdk:paypal-android-sdk:2.16.0'
     implementation 'com.squareup.picasso:picasso:2.8'
-    implementation 'com.google.firebase:firebase-firestore:24.10.1'
+    implementation 'com.google.firebase:firebase-firestore:24.10.2'
     implementation 'com.google.firebase:firebase-auth:22.3.1'
     implementation 'com.google.android.gms:play-services-ads:22.6.0'
-    implementation 'com.google.android.gms:play-services-auth:20.7.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

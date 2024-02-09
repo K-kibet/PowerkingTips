@@ -25,7 +25,7 @@ public class BannerManager {
 
     public void loadBanner() {
         AdView adView = new AdView(context);
-        adView.setAdUnitId(context.getString(R.string.Banner_Ad_Unit));
+        adView.setAdUnitId(activity.getString(R.string.Banner_Ad_Unit));
         adViewContainer.removeAllViews();
         adViewContainer.addView(adView);
 

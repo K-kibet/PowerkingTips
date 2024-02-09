@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.kibet.powerking.activities.TipActivity;
+import com.kibet.powerking.data.Tip;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

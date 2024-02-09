@@ -1,4 +1,4 @@
-package com.kibet.powerking;
+package com.kibet.powerking.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -16,12 +16,14 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.kibet.powerking.R;
+import com.kibet.powerking.ads.BannerManager;
+
 import java.util.Objects;
 
 public class TipActivity extends AppCompatActivity {
     FirebaseFirestore db;
     String id;
-    private FrameLayout adViewContainer;
     TextView textDate, textTime, textStatus, btnStatus, textHome, textAway, textOdd, textPrediction;
     ImageView isWonImage;
     @Override
@@ -44,8 +46,9 @@ public class TipActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         readFirebase();
 
-        adViewContainer = findViewById(R.id.adViewContainer);
-        adViewContainer.post(this::LoadBanner);
+        FrameLayout adViewContainer = findViewById(R.id.adViewContainer);
+        BannerManager bannerManager = new BannerManager(this, TipActivity.this, adViewContainer);
+        bannerManager.loadBanner();
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -77,26 +80,5 @@ public class TipActivity extends AppCompatActivity {
                 Toast.makeText(TipActivity.this, "An Error Occurred", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void LoadBanner() {
-        AdView adView = new AdView(this);
-        adView.setAdUnitId(getString(R.string.Banner_Ad_Unit));
-        adViewContainer.removeAllViews();
-        adViewContainer.addView(adView);
-        AdSize adSize = getAdSize();
-        adView.setAdSize(adSize);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
-    }
-
-    private AdSize getAdSize() {
-        Display display = getWindowManager().getDefaultDisplay();
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        display.getMetrics(outMetrics);
-        float widthPixels = outMetrics.widthPixels;
-        float density = outMetrics.density;
-        int adWidth = (int) (widthPixels / density);
-        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, adWidth);
     }
 }

@@ -1,4 +1,4 @@
-package com.kibet.powerking;
+package com.kibet.powerking.fragments;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,7 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.kibet.powerking.R;
 import com.kibet.powerking.ads.BannerManager;
+import com.kibet.powerking.data.Tip;
+import com.kibet.powerking.TipsAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +47,7 @@ public class FreeFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
 
 
-        new Handler().postDelayed(this::readFirebase, 1000);
+        readFirebase();
         FrameLayout adViewContainer = view.findViewById(R.id.adViewContainer);
         BannerManager bannerManager = new BannerManager(requireContext(), requireActivity(), adViewContainer);
         bannerManager.loadBanner();

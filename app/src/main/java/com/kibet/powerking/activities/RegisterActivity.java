@@ -1,7 +1,6 @@
-package com.kibet.powerking;
+package com.kibet.powerking.activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -11,9 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.kibet.powerking.R;
 
 public class RegisterActivity extends AppCompatActivity {
     EditText username, email, password;
@@ -34,7 +31,7 @@ public class RegisterActivity extends AppCompatActivity {
         MaterialButton btnRegister = findViewById(R.id.btnRegister);
         btnRegister.setOnClickListener(v -> handleRegister());
     }
-    private void saveUser (String username, String email) {
+    /*private void saveUser (String username, String email) {
 
         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
         Map<String, Object> user = new HashMap<>();
@@ -51,15 +48,15 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(this, "User not saved", Toast.LENGTH_SHORT).show();
                     startActivity(intent);
                 });
-    }
+    }*/
     private void registerNewUser() {
         mAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        SharedPreferences.Editor editor = getSharedPreferences("Powerking", MODE_PRIVATE).edit();
-                        editor.putBoolean("premium", false);
-                        editor.putString("username", username.getText().toString());
-                        editor.apply();
+                        //SharedPreferences.Editor editor = getSharedPreferences("Powerking", MODE_PRIVATE).edit();
+                        //editor.putBoolean("premium", false);
+                        //editor.putString("username", username.getText().toString());
+                        //editor.apply();
                         Toast.makeText(getApplicationContext(), "Registration successful!", Toast.LENGTH_LONG).show();
                         //progressBar.setVisibility(View.GONE);
                         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);

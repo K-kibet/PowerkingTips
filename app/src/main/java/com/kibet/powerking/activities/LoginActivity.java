@@ -1,4 +1,4 @@
-package com.kibet.powerking;
+package com.kibet.powerking.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +7,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.kibet.powerking.MainActivity;
+import com.kibet.powerking.R;
 
 public class LoginActivity extends AppCompatActivity {
     EditText email, password;
@@ -29,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(getApplicationContext(), "Registration successful!" + task.getResult().toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Login successful!" + task.getResult().toString(), Toast.LENGTH_LONG).show();
                         //progressBar.setVisibility(View.GONE);
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);

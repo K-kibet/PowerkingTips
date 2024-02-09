@@ -1,17 +1,14 @@
-package com.kibet.powerking;
+package com.kibet.powerking.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 import com.google.android.material.button.MaterialButton;
+import com.kibet.powerking.MainActivity;
+import com.kibet.powerking.R;
 import com.kibet.powerking.ads.BannerManager;
 
 public class PromptActivity extends AppCompatActivity {

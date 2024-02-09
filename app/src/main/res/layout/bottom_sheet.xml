@@ -39,6 +39,5 @@
         android:textColor="@color/green"
         android:backgroundTint="@color/white"
         app:strokeColor="@color/green"
-        app:strokeWidth="1dp"
-        android:drawableEnd="@drawable/cio_ic_paypal_monogram"/>
+        app:strokeWidth="1dp"/>
 </LinearLayout>

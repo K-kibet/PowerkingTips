@@ -1,4 +1,4 @@
-package com.kibet.powerking;
+package com.kibet.powerking.data;
 
 public class Tip {
     public String getHomeTeam() {

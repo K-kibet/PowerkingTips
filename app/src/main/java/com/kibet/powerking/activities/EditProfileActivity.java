@@ -1,20 +1,16 @@
-package com.kibet.powerking;
+package com.kibet.powerking.activities;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.kibet.powerking.R;
 import com.kibet.powerking.ads.BannerManager;
 
 import java.util.HashMap;
@@ -35,11 +31,11 @@ public class EditProfileActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        prefs = getSharedPreferences("Powerking", MODE_PRIVATE);
+        prefs = getSharedPreferences("Account", MODE_PRIVATE);
         setValues();
 
         MaterialButton btnUpdate = findViewById(R.id.btnUpdate);
-        btnUpdate.setOnClickListener(v -> updateProfile());
+        //btnUpdate.setOnClickListener(v -> updateProfile());
 
         FrameLayout adViewContainer = findViewById(R.id.adViewContainer);
         BannerManager bannerManager = new BannerManager(this, EditProfileActivity.this, adViewContainer);

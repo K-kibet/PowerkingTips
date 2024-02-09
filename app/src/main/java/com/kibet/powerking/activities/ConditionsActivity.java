@@ -1,4 +1,4 @@
-package com.kibet.powerking;
+package com.kibet.powerking.activities;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -6,6 +6,7 @@ import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.kibet.powerking.R;
 import com.kibet.powerking.ads.BannerManager;
 
 public class ConditionsActivity extends AppCompatActivity {
