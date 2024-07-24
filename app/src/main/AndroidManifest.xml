@@ -13,7 +13,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.PowerkingBettingTips"
-        tools:targetApi="33">
+        tools:targetApi="34">
         <activity
             android:name=".activities.PromptActivity"
             android:exported="false" />
@@ -25,15 +25,6 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.EditProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.RegisterActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.LoginActivity"
             android:exported="false" />
         <activity
             android:name=".activities.SplashActivity"
